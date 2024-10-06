@@ -38,16 +38,29 @@ async function fetchTMDBMetadata(id, type) {
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
-const addon = new addonBuilder({
+// Explicitly define the resources array
+const addonResources = ['catalog', 'meta', 'stream', 'poster'];
+
+// Create a manifest object
+const manifest = {
     id: 'org.traktvision',
     version: '1.0.0',
     name: 'TraktVision',
     description: 'Visualize your Trakt watching progress on Cinemeta posters',
-    resources: ['catalog', 'meta', 'stream', 'poster'],
+    resources: addonResources,
     types: ['movie', 'series'],
     catalogs: [],
     idPrefixes: ['tt']
-});
+};
+
+// Log the manifest for debugging
+console.log('Manifest:', JSON.stringify(manifest, null, 2));
+
+// Initialize the addon with the manifest object
+const addon = new addonBuilder(manifest);
+
+// Log successful initialization
+console.log('Addon initialized successfully');
 
 // Modify the parseUserData function
 function parseUserData(config) {
