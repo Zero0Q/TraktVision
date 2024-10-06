@@ -9,7 +9,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-session": "^1.17.2",
-    "stremio-addon-sdk": "^1.6.10",
+    "stremio-addon-sdk": "latest",
     "trakt.tv": "^8.1.1",
     "sharp": "^0.30.5",
     "node-fetch": "^2.6.1"
