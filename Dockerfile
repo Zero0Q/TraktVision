@@ -1,8 +1,8 @@
-# Use a smaller base image
-FROM node:14-alpine
+# Use a more recent Node.js version
+FROM node:16-alpine
 
-# Install necessary build tools
-RUN apk add --no-cache python3 make g++ curl
+# Install necessary build tools and libraries
+RUN apk add --no-cache python3 make g++ curl git
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -10,8 +10,8 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install dependencies
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
