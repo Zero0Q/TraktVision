@@ -9,7 +9,8 @@ TraktVision is a Stremio addon that integrates with Trakt to visually display yo
 - Displays progress bar on content posters in Stremio
 - Server-side processing of poster modifications
 - No persistent storage of user data or Trakt credentials on the server
-- Integration with TMDB (The Movie Database) for metadata
+- Integration with TMDB (The Movie Database) for metadata, with fallback to Cinemeta
+- Image processing using the sharp library for efficient poster modification
 
 ## Installation
 
@@ -28,9 +29,9 @@ TraktVision is a Stremio addon that integrates with Trakt to visually display yo
 5. When Stremio requests content, it sends this URL to the addon server
 6. The addon server processes the request:
    - Decodes the user data from the URL
-   - Fetches current metadata from TMDB
+   - Fetches current metadata from TMDB (falls back to Cinemeta if TMDB fails)
    - Calculates the user's progress for the requested content
-   - Modifies the poster to include a progress bar
+   - Modifies the poster to include a progress bar using the sharp library
    - Sends the modified poster back to Stremio
 7. Stremio displays the personalized poster with the progress bar
 
@@ -40,8 +41,8 @@ The addon server plays a crucial role in processing requests and generating modi
 
 - It receives requests from Stremio, including the user's configuration
 - It uses this configuration to calculate current progress for requested content
-- It fetches metadata and original posters from TMDB
-- It modifies the posters to include progress bars
+- It fetches metadata and original posters from TMDB (or Cinemeta as a fallback)
+- It modifies the posters to include progress bars using the sharp library
 - It sends these modified posters back to Stremio for display
 
 The server does not store any user data persistently. Each request is processed independently using the configuration provided in the URL.
@@ -71,6 +72,16 @@ The addon is configured through the web interface (config.html). Users need to:
 1. Authenticate with Trakt
 2. Set the refresh rate (in minutes)
 3. Use the generated URL to add the addon to Stremio
+
+## Error Handling and User Feedback
+
+The addon implements error handling at various levels:
+
+- Client-side: The configuration page provides feedback for authentication errors and invalid inputs.
+- Server-side: The addon handles errors when fetching metadata or processing requests, falling back to alternative sources when possible.
+- User feedback: Error messages are logged and, where appropriate, returned to Stremio for display to the user.
+
+In case of failures, the addon will attempt to provide a degraded service (e.g., using Cinemeta instead of TMDB) rather than completely failing.
 
 ## Security Note
 
