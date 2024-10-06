@@ -1,13 +1,14 @@
 # TraktVision
 
-TraktVision is a Stremio addon that integrates with Trakt to visually display your watching progress on content posters. It allows users to authenticate with their Trakt account and set a custom refresh rate for updating progress information, all while keeping sensitive data client-side.
+TraktVision is a Stremio addon that integrates with Trakt to visually display your watching progress on content posters. It allows users to authenticate with their Trakt account and set a custom refresh rate for updating progress information, while keeping sensitive data secure.
 
 ## Features
 
-- Secure authentication with Trakt (entirely client-side)
+- Secure authentication with Trakt (client-side)
 - Customizable refresh rate for progress updates
 - Displays progress bar on content posters in Stremio
-- No server-side storage of user data or Trakt credentials
+- Server-side processing of poster modifications
+- No persistent storage of user data or Trakt credentials on the server
 
 ## Installation
 
@@ -23,7 +24,29 @@ TraktVision is a Stremio addon that integrates with Trakt to visually display yo
 2. The configuration page fetches the user's watching data from Trakt
 3. A unique URL is generated containing the user's data and preferences
 4. This URL is used to add the addon to Stremio
-5. The addon server receives only the data in the URL, with no direct Trakt integration
+5. When Stremio requests content, it sends this URL to the addon server
+6. The addon server processes the request:
+   - Decodes the user data from the URL
+   - Fetches current metadata from Cinemeta
+   - Calculates the user's progress for the requested content
+   - Modifies the poster to include a progress bar
+   - Sends the modified poster back to Stremio
+7. Stremio displays the personalized poster with the progress bar
+
+## Server Role
+
+The addon server plays a crucial role in processing requests and generating modified posters:
+
+- It receives requests from Stremio, including the user's configuration
+- It uses this configuration to calculate current progress for requested content
+- It fetches original posters and modifies them to include progress bars
+- It sends these modified posters back to Stremio for display
+
+The server does not store any user data persistently. Each request is processed independently using the configuration provided in the URL.
+
+## Refresh Rate
+
+The refresh rate set during configuration influences how often Stremio will request updated information from the addon. However, each request to the addon server will always fetch the most current data from Cinemeta and calculate up-to-date progress based on the user's Trakt data provided in the configuration.
 
 ## Development
 
@@ -39,7 +62,7 @@ To run this addon locally:
 
 ## Configuration
 
-The addon is configured entirely through the web interface (config.html). Users need to:
+The addon is configured through the web interface (config.html). Users need to:
 
 1. Authenticate with Trakt
 2. Set the refresh rate (in minutes)
@@ -47,12 +70,18 @@ The addon is configured entirely through the web interface (config.html). Users 
 
 ## Security Note
 
-This addon uses client-side authentication and passes all necessary data through the URL. While this ensures no sensitive data is stored on the server, be cautious about sharing the generated URL, as it contains your Trakt watching data and access token.
+While this addon processes requests server-side, it's designed with privacy in mind:
+- Authentication and initial data fetching occur client-side
+- User data is passed through the URL and not stored on the server
+- Each request is processed independently
+- No persistent storage of user data or credentials on the server
+
+However, be cautious about sharing the generated URL, as it contains your Trakt watching data and access token.
 
 ## Limitations
 
-- The addon relies on data fetched at configuration time. For updated progress, users need to regenerate the addon URL periodically.
-- Large amounts of watching data might result in very long URLs.
+- The addon relies on data fetched at configuration time. For major updates in watching history, users may need to regenerate the addon URL.
+- Very large amounts of watching data might result in long URLs.
 
 ## Contributing
 
