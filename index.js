@@ -45,7 +45,8 @@ const addon = new addonBuilder({
     description: 'Visualize your Trakt watching progress on Cinemeta posters',
     resources: ['catalog', 'meta', 'stream'],
     types: ['movie', 'series'],
-    catalogs: []
+    catalogs: [],
+    idPrefixes: ['tt']
 });
 
 // Modify the parseUserData function
