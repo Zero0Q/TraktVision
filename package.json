@@ -1,0 +1,22 @@
+{
+  "name": "traktvision",
+  "version": "1.0.0",
+  "description": "Visualize your Trakt watching progress on content posters",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "stremio-addon-sdk": "^1.6.10",
+    "trakt.tv": "^8.1.1",
+    "sharp": "^0.30.5",
+    "node-fetch": "^2.6.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}

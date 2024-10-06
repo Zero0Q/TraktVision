@@ -24,16 +24,17 @@ TraktVision is a Stremio addon that integrates with Trakt to visually display yo
 
 1. User authenticates with Trakt in their browser
 2. The configuration page fetches the user's watching data from Trakt
-3. A unique URL is generated containing the user's data and preferences
-4. This URL is used to add the addon to Stremio
-5. When Stremio requests content, it sends this URL to the addon server
-6. The addon server processes the request:
-   - Decodes the user data from the URL
+3. User enters their TMDB API key
+4. A unique URL is generated containing the user's data, preferences, and TMDB API key
+5. This URL is used to add the addon to Stremio
+6. When Stremio requests content, it sends this URL to the addon server
+7. The addon server processes the request:
+   - Decodes the user data and TMDB API key from the URL
    - Fetches current metadata from TMDB (falls back to Cinemeta if TMDB fails)
    - Calculates the user's progress for the requested content
    - Modifies the poster to include a progress bar using the sharp library
    - Sends the modified poster back to Stremio
-7. Stremio displays the personalized poster with the progress bar
+8. Stremio displays the personalized poster with the progress bar
 
 ## Server Role
 
@@ -71,7 +72,8 @@ The addon is configured through the web interface (config.html). Users need to:
 
 1. Authenticate with Trakt
 2. Set the refresh rate (in minutes)
-3. Use the generated URL to add the addon to Stremio
+3. Enter their TMDB API key
+4. Use the generated URL to add the addon to Stremio
 
 ## Error Handling and User Feedback
 
@@ -87,11 +89,11 @@ In case of failures, the addon will attempt to provide a degraded service (e.g.,
 
 While this addon processes requests server-side, it's designed with privacy in mind:
 - Authentication and initial data fetching occur client-side
-- User data is passed through the URL and not stored on the server
+- User data and TMDB API key are passed through the URL and not stored on the server
 - Each request is processed independently
 - No persistent storage of user data or credentials on the server
 
-However, be cautious about sharing the generated URL, as it contains your Trakt watching data and access token.
+However, be cautious about sharing the generated URL, as it contains your Trakt watching data, access token, and TMDB API key.
 
 ## Limitations
 
@@ -106,3 +108,49 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Docker Installation
+
+To run TraktVision using Docker:
+
+1. Clone this repository
+2. Create a `.env` file in the project root with your TMDB API key:
+   ```
+   TMDB_API_KEY=your_tmdb_api_key_here
+   ```
+3. Build and run the Docker container:
+   ```
+   docker-compose up -d
+   ```
+4. Access the configuration page at `http://localhost:3000/config.html`
+5. Follow the steps in the "Installation" section above, starting from step 2
+
+Note: Make sure to keep your `.env` file secure and do not commit it to version control.
+
+## Portainer Installation
+
+To deploy TraktVision using Portainer:
+
+1. In Portainer, go to Stacks and click "Add stack"
+2. Name your stack (e.g., "traktvision")
+3. In the "Web editor" tab, paste the contents of the `docker-compose.yml` file
+4. Update the `TMDB_API_KEY` environment variable with your actual TMDB API key
+5. Click "Deploy the stack"
+
+The TraktVision addon will now be accessible at `http://your-server-ip:3000/config.html`
+
+## Updating the Addon
+
+To update the addon:
+
+1. Pull the latest changes from the repository
+2. Rebuild the Docker image:
+   ```
+   docker-compose build
+   ```
+3. Update the running container:
+   ```
+   docker-compose up -d
+   ```
+
+For Portainer, you can update the stack by re-deploying it with the updated `docker-compose.yml` file.
