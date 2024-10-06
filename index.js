@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 const path = require('path');
 
 // At the top of the file, add:
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 7654;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
 async function fetchTMDBMetadata(id, type) {
@@ -47,7 +47,7 @@ const manifest = {
     version: '1.0.0',
     name: 'TraktVision',
     description: 'Visualize your Trakt watching progress on Cinemeta posters',
-    resources: addonResources,
+    resources: addonResources,  // This line ensures resources is an array
     types: ['movie', 'series'],
     catalogs: [],
     idPrefixes: ['tt']
