@@ -43,7 +43,7 @@ const addon = new addonBuilder({
     version: '1.0.0',
     name: 'TraktVision',
     description: 'Visualize your Trakt watching progress on Cinemeta posters',
-    resources: ['catalog', 'meta', 'stream'],
+    resources: ['catalog', 'meta', 'stream', 'poster'], // Add 'poster' to the resources array
     types: ['movie', 'series'],
     catalogs: [],
     idPrefixes: ['tt']
