@@ -9,6 +9,7 @@ TraktVision is a Stremio addon that integrates with Trakt to visually display yo
 - Displays progress bar on content posters in Stremio
 - Server-side processing of poster modifications
 - No persistent storage of user data or Trakt credentials on the server
+- Integration with TMDB (The Movie Database) for metadata
 
 ## Installation
 
@@ -27,7 +28,7 @@ TraktVision is a Stremio addon that integrates with Trakt to visually display yo
 5. When Stremio requests content, it sends this URL to the addon server
 6. The addon server processes the request:
    - Decodes the user data from the URL
-   - Fetches current metadata from Cinemeta
+   - Fetches current metadata from TMDB
    - Calculates the user's progress for the requested content
    - Modifies the poster to include a progress bar
    - Sends the modified poster back to Stremio
@@ -39,14 +40,15 @@ The addon server plays a crucial role in processing requests and generating modi
 
 - It receives requests from Stremio, including the user's configuration
 - It uses this configuration to calculate current progress for requested content
-- It fetches original posters and modifies them to include progress bars
+- It fetches metadata and original posters from TMDB
+- It modifies the posters to include progress bars
 - It sends these modified posters back to Stremio for display
 
 The server does not store any user data persistently. Each request is processed independently using the configuration provided in the URL.
 
 ## Refresh Rate
 
-The refresh rate set during configuration influences how often Stremio will request updated information from the addon. However, each request to the addon server will always fetch the most current data from Cinemeta and calculate up-to-date progress based on the user's Trakt data provided in the configuration.
+The refresh rate set during configuration influences how often Stremio will request updated information from the addon. However, each request to the addon server will always fetch the most current data from TMDB and calculate up-to-date progress based on the user's Trakt data provided in the configuration.
 
 ## Development
 
@@ -57,8 +59,10 @@ To run this addon locally:
 3. Replace 'YOUR_TRAKT_CLIENT_ID' in config.html with your actual Trakt Client ID
    - You'll need to create a Trakt application at https://trakt.tv/oauth/applications
    - Set the redirect URI to the URL where your config.html will be hosted
-4. Run the addon with `npm start`
-5. Open config.html in your browser to configure and get the addon URL
+4. Obtain a TMDB API key from https://www.themoviedb.org/settings/api
+5. Set your TMDB API key as an environment variable or in a config file (do not commit this to version control)
+6. Run the addon with `npm start`
+7. Open config.html in your browser to configure and get the addon URL
 
 ## Configuration
 
@@ -82,6 +86,7 @@ However, be cautious about sharing the generated URL, as it contains your Trakt 
 
 - The addon relies on data fetched at configuration time. For major updates in watching history, users may need to regenerate the addon URL.
 - Very large amounts of watching data might result in long URLs.
+- TMDB API usage is subject to their terms of service and rate limiting.
 
 ## Contributing
 
