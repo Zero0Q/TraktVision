@@ -1,5 +1,8 @@
-# Use an official Node.js runtime as the base image
-FROM node:14
+# Use a smaller base image
+FROM node:14-alpine
+
+# Install necessary build tools
+RUN apk add --no-cache python3 make g++ curl
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -7,8 +10,8 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install the application dependencies
-RUN npm install
+# Install production dependencies only
+RUN npm ci --only=production
 
 # Copy the rest of the application code
 COPY . .
