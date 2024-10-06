@@ -42,7 +42,10 @@ const addon = new addonBuilder({
     id: 'org.traktvision',
     version: '1.0.0',
     name: 'TraktVision',
-    description: 'Visualize your Trakt watching progress on Cinemeta posters'
+    description: 'Visualize your Trakt watching progress on Cinemeta posters',
+    resources: ['catalog', 'meta', 'stream'],
+    types: ['movie', 'series'],
+    catalogs: []
 });
 
 // Modify the parseUserData function
