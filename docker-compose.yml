@@ -4,8 +4,6 @@ services:
     build: .
     ports:
       - "3000:3000"
-    env_file:
-      - .env
     environment:
       - PORT=3000
       - TMDB_API_KEY=${TMDB_API_KEY}
