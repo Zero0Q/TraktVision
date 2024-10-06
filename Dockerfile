@@ -1,8 +1,8 @@
-# Use a more recent Node.js version
-FROM node:16-alpine
+# Use a smaller base image
+FROM node:14-alpine
 
-# Install necessary build tools and libraries
-RUN apk add --no-cache python3 make g++ curl git
+# Install necessary build tools
+RUN apk add --no-cache python3 make g++ curl
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -10,8 +10,8 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install all dependencies
-RUN npm install
+# Install production dependencies and update stremio-addon-sdk to latest
+RUN npm ci --only=production && npm install stremio-addon-sdk@latest
 
 # Copy the rest of the application code
 COPY . .
