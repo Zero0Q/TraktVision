@@ -154,9 +154,6 @@ addon.defineMetaHandler(async ({ id, type, config }) => {
 addon.defineResourceHandler(async ({ id, type, config }) => {
     if (type !== 'poster') return null;
     
-    addon.defineResourceHandler(async ({ id, type, config }) => {
-    if (type !== 'poster') return null;
-    
     // Try TMDB first
     let meta = await fetchTMDBMetadata(id, type);
     
