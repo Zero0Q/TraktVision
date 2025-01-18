@@ -4,7 +4,6 @@ const sharp = require('sharp');
 const fetch = require('node-fetch');
 const path = require('path');
 
-// At the top of the file, add:
 const PORT = process.env.PORT || 7654;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
@@ -41,7 +40,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Explicitly define the resources array
 const addonResources = ['catalog', 'meta', 'stream', 'poster'];
 
-// Create a manifest object
 const manifest = {
     id: 'org.traktvision',
     version: '1.0.0',
@@ -56,13 +54,10 @@ const manifest = {
 // Log the manifest for debugging
 console.log('Manifest:', JSON.stringify(manifest, null, 2));
 
-// Initialize the addon with the manifest object
 const addon = new addonBuilder(manifest);
 
-// Log successful initialization
 console.log('Addon initialized successfully');
 
-// Modify the parseUserData function
 function parseUserData(config) {
     try {
         const { userData, refreshRate } = JSON.parse(Buffer.from(config, 'base64').toString());
@@ -146,8 +141,8 @@ addon.defineMetaHandler(async ({ id, type, config }) => {
 addon.defineResourceHandler(async ({ id, type, config }) => {
     if (type !== 'poster') return null;
     
-    const { userData, refreshRate } = parseUserData(config);
-    if (!userData) return null;
+    addon.defineResourceHandler(async ({ id, type, config }) => {
+    if (type !== 'poster') return null;
     
     // Try TMDB first
     let meta = await fetchTMDBMetadata(id, type);
@@ -207,12 +202,10 @@ app.get('/:resource/:type/:id/:extra?.json', (req, res) => {
     addon.get(resource, type, id, config).then(resp => res.json(resp));
 });
 
-// Replace hardcoded port with PORT variable
 app.listen(PORT, () => {
     console.log(`Addon running on port ${PORT}`);
 });
 
-// Add this near the other app.get routes
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
