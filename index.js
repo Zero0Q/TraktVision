@@ -37,6 +37,19 @@ async function fetchTMDBMetadata(id, type) {
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Add the new routes here
+app.get('/', (req, res) => {
+    res.send('Welcome to TraktVision!');
+});
+
+app.get('/configure', (req, res) => {
+    res.send('Configure TraktVision here.');
+});
+
+app.get('/config.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'config.html'));
+});
+
 // Explicitly define the resources array
 const addonResources = ['catalog', 'meta', 'stream', 'poster'];
 
@@ -208,4 +221,9 @@ app.listen(PORT, () => {
 
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
+});
+
+// Catch-all route for 404 errors
+app.use((req, res) => {
+    res.status(404).send('404: Page not found');
 });
