@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuration</title>
+    <title>TraktVision Configuration</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/trakt.tv@latest/dist/trakt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/trakt-js@0.0.6/index.min.js"></script>
 </head>
 <body>
     <h1>Configure TraktVision</h1>
     <button id="loginButton">Login with Trakt</button>
+    
     <form id="configForm" style="display:none;">
         <label for="refreshRate">Refresh Rate (in minutes):</label>
         <input type="number" id="refreshRate" min="5" max="1440" value="60"><br><br>
+        
         <button type="submit">Generate Addon URL</button>
     </form>
+    
     <div id="result"></div>
     <div id="loading" style="display:none;">Loading...</div>
-    <script>
-        const CLIENT_ID = 'your_actual_client_id';
-        const REDIRECT_URI = window.location.href.split('?')[0];
 
+    <script>
+        const CLIENT_ID = '977a8aee239ba2434fdd97ee80e7449058e11884bd8327c5aa0028df98c920d0';
+        const REDIRECT_URI = window.location.href.split('?')[0];
+        
         const trakt = new Trakt({
             client_id: CLIENT_ID,
             redirect_uri: REDIRECT_URI
@@ -29,15 +33,10 @@
         const loginButton = document.getElementById('loginButton');
         const configForm = document.getElementById('configForm');
         const loading = document.getElementById('loading');
-
+        
         loginButton.addEventListener('click', () => {
-            try {
-                const authUrl = trakt.get_url();
-                window.location.href = authUrl;
-            } catch (error) {
-                console.error('Error generating auth URL:', error);
-                alert('Failed to generate Trakt authorization URL.');
-            }
+            const authUrl = trakt.get_url();
+            window.location.href = authUrl;
         });
 
         configForm.addEventListener('submit', async (e) => {
@@ -45,13 +44,13 @@
             loading.style.display = 'block';
             const refreshRate = document.getElementById('refreshRate').value;
             const accessToken = localStorage.getItem('traktAccessToken');
-
+            
             if (!accessToken) {
                 alert('Please login with Trakt first');
                 loading.style.display = 'none';
                 return;
             }
-
+            
             trakt.import_token({
                 access_token: accessToken,
                 expires: 3600,
@@ -63,10 +62,10 @@
                 const watched = await trakt.users.watched({ type: 'shows' });
                 const watchedMovies = await trakt.users.watched({ type: 'movies' });
                 const userData = { watching, watched, watchedMovies };
-
+                
                 const config = btoa(JSON.stringify({ userData, refreshRate }));
                 const addonUrl = `${window.location.origin}/manifest.json?config=${config}`;
-
+                
                 document.getElementById('result').innerHTML = `
                     <p>Add this URL to your Stremio:</p>
                     <code>${addonUrl}</code>
@@ -79,6 +78,21 @@
                 loading.style.display = 'none';
             }
         });
+
+        // Check if we're returning from Trakt authorization
+        if (window.location.hash) {
+            loading.style.display = 'block';
+            trakt.exchange_code(window.location.hash)
+                .then(result => {
+                    localStorage.setItem('traktAccessToken', result.access_token);
+                    loginButton.style.display = 'none';
+                    configForm.style.display = 'block';
+                })
+                .catch(console.error)
+                .finally(() => {
+                    loading.style.display = 'none';
+                });
+        }
     </script>
 </body>
 </html>
